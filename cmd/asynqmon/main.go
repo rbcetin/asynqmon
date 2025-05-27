@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -178,7 +179,9 @@ func main() {
 			prometheus.NewProcessCollector(prometheus.ProcessCollectorOpts{}),
 			prometheus.NewGoCollector(),
 		)
-		mux.Handle("/metrics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{}))
+
+		metricsPath := path.Join(cfg.RootPath, "/metrics")
+		mux.Handle(metricsPath, promhttp.HandlerFor(reg, promhttp.HandlerOpts{}))
 	}
 
 	srv := &http.Server{
