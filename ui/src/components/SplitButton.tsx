@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   buttonContained: {
     backgroundColor: isDarkTheme(theme)
       ? "#303030"
-      : theme.palette.background.default,
+      : theme.palette.grey[100],
     color: theme.palette.text.primary,
     "&:hover": {
       backgroundColor: theme.palette.action.hover,

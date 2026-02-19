@@ -102,7 +102,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
     background: isDarkTheme(theme)
       ? "#303030"
-      : theme.palette.background.default,
+      : theme.palette.grey[100],
     textAlign: "center",
     padding: "3px 6px",
     borderRadius: "10px",

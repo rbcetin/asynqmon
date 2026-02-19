@@ -21,6 +21,7 @@ import TablePaginationActions, {
   rowsPerPageOptions,
 } from "./TablePaginationActions";
 import TableActions from "./TableActions";
+import TaskIdFilterToolbar from "./TaskIdFilterToolbar";
 import { usePolling } from "../hooks";
 import { TaskInfoExtended } from "../reducers/tasksReducer";
 import { TableColumn } from "../types/table";
@@ -225,6 +226,20 @@ export default function TasksTable(props: Props) {
           menuItemActions={allActions}
         />
       )}
+      <TaskIdFilterToolbar
+        tasks={props.tasks}
+        selectedIds={selectedIds}
+        onSelectIds={setSelectedIds}
+        onBatchDelete={
+          props.batchDeleteTasks
+            ? (taskIds) =>
+                props.batchDeleteTasks!(queue, taskIds).then(() =>
+                  setSelectedIds([])
+                )
+            : undefined
+        }
+        batchActionPending={props.batchActionPending}
+      />
       <TableContainer component={Paper}>
         <Table
           stickyHeader={true}
