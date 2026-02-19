@@ -80,7 +80,11 @@ export default function TaskIdFilterToolbar(
 
   const filterLower = filter.toLowerCase().trim();
   const matchingTasks = filterLower
-    ? tasks.filter((t) => t.id.toLowerCase().includes(filterLower))
+    ? tasks.filter(
+        (t) =>
+          t.id.toLowerCase().includes(filterLower) ||
+          (t.payload && t.payload.toLowerCase().includes(filterLower))
+      )
     : tasks;
   const matchCount = matchingTasks.length;
 
@@ -118,7 +122,7 @@ export default function TaskIdFilterToolbar(
         className={classes.filterInput}
         size="small"
         variant="outlined"
-        placeholder="Filter by task ID..."
+        placeholder="Filter by task ID or payload..."
         value={filter}
         onChange={(e) => setFilter(e.target.value)}
       />
