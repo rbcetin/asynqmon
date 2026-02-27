@@ -1,0 +1,69 @@
+/* Light-theme global overrides – scoped so dark mode is unaffected */
+
+body.light-theme ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+body.light-theme ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body.light-theme ::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.18);
+  border-radius: 999px;
+}
+
+body.light-theme ::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 23, 42, 0.30);
+}
+
+/* Prevent horizontal overflow (all themes) */
+#root,
+main {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Constrain tables and wide content inside the main area */
+.MuiTableContainer-root {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* pre / code wrapping */
+body.light-theme pre,
+body.light-theme code {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Alert variant backgrounds */
+body.light-theme .MuiAlert-standardError {
+  background-color: #fef2f2;
+}
+
+body.light-theme .MuiAlert-standardWarning {
+  background-color: #fffbeb;
+}
+
+body.light-theme .MuiAlert-standardInfo {
+  background-color: #eff6ff;
+}
+
+body.light-theme .MuiAlert-standardSuccess {
+  background-color: #f0fdf4;
+}
+
+/* Responsive drawer width tweaks */
+@media (max-width: 1100px) {
+  body.light-theme .MuiDrawer-paperAnchorDockedLeft {
+    width: 180px;
+  }
+}
+
+@media (max-width: 720px) {
+  body.light-theme .MuiDrawer-paperAnchorDockedLeft {
+    width: 64px;
+  }
+}

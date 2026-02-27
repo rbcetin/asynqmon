@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import clsx from "clsx";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { makeStyles, Theme, ThemeProvider } from "@material-ui/core/styles";
+import "./lightThemeGlobal.css";
 import AppBar from "@material-ui/core/AppBar";
 import Drawer from "@material-ui/core/Drawer";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -106,10 +107,12 @@ const useStyles = (theme: Theme) =>
     appBarSpacer: theme.mixins.toolbar,
     mainContainer: {
       display: "flex",
-      width: "100vw",
+      width: "100%",
+      overflow: "hidden",
     },
     content: {
       flex: 1,
+      minWidth: 0,
       height: "100vh",
       overflow: "hidden",
       background: theme.palette.background.paper,
@@ -118,7 +121,8 @@ const useStyles = (theme: Theme) =>
       height: "100%",
       display: "flex",
       paddingTop: "64px", // app-bar height
-      overflow: "scroll",
+      overflowY: "auto",
+      overflowX: "hidden",
     },
     sidebarContainer: {
       display: "flex",
@@ -155,6 +159,15 @@ function App(props: ConnectedProps<typeof connector>) {
   const theme = useTheme(props.themePreference);
   const classes = useStyles(theme)();
   const paths = getPaths();
+
+  useEffect(() => {
+    if (isDarkTheme(theme)) {
+      document.body.classList.remove("light-theme");
+    } else {
+      document.body.classList.add("light-theme");
+    }
+  }, [theme]);
+
   return (
     <ThemeProvider theme={theme}>
       <Router>
