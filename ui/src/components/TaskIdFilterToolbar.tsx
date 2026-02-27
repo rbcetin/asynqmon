@@ -31,29 +31,16 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.success.main,
     marginLeft: theme.spacing(1),
   },
-  removeBtn: {
-    color: theme.palette.error.main,
-    borderColor: theme.palette.error.main,
-    "&:hover": {
-      backgroundColor: theme.palette.error.light + "1a",
-      borderColor: theme.palette.error.dark,
-    },
-  },
 }));
 
 interface TaskIdFilterToolbarProps {
   tasks: TaskInfoExtended[];
   selectedIds: string[];
   onSelectIds: (ids: string[]) => void;
-  onBatchDelete?: (taskIds: string[]) => Promise<void>;
-  batchActionPending: boolean;
 }
 
-export default function TaskIdFilterToolbar(
-  props: TaskIdFilterToolbarProps
-) {
-  const { tasks, selectedIds, onSelectIds, onBatchDelete, batchActionPending } =
-    props;
+export default function TaskIdFilterToolbar(props: TaskIdFilterToolbarProps) {
+  const { tasks, selectedIds, onSelectIds } = props;
   const classes = useStyles();
   const [filter, setFilter] = useState("");
   const [feedback, setFeedback] = useState("");
@@ -100,22 +87,6 @@ export default function TaskIdFilterToolbar(
     showFeedback("Cleared selection");
   };
 
-  const handleRemoveFiltered = () => {
-    if (!onBatchDelete) return;
-    const matchingIds = matchingTasks.map((t) => t.id);
-    if (matchingIds.length === 0) {
-      showFeedback("No matching tasks to remove");
-      return;
-    }
-    const confirmed = window.confirm(
-      `Delete ${matchingIds.length} task(s) matching "${filter}"?`
-    );
-    if (!confirmed) return;
-    onBatchDelete(matchingIds).then(() => {
-      showFeedback(`Removed ${matchingIds.length} task(s)`);
-    });
-  };
-
   return (
     <div className={classes.toolbar}>
       <TextField
@@ -143,17 +114,6 @@ export default function TaskIdFilterToolbar(
       >
         Unpick all
       </Button>
-      {!window.READ_ONLY && onBatchDelete && (
-        <Button
-          size="small"
-          variant="outlined"
-          className={classes.removeBtn}
-          onClick={handleRemoveFiltered}
-          disabled={batchActionPending || matchCount === 0}
-        >
-          Remove filtered
-        </Button>
-      )}
       <Typography className={classes.stats} component="span">
         {matchCount}/{tasks.length} match &middot; {selectedIds.length} selected
       </Typography>

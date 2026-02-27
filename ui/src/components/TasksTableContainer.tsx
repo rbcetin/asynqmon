@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Chip from "@material-ui/core/Chip";
-import InputBase from "@material-ui/core/InputBase";
-import SearchIcon from "@material-ui/icons/Search";
 import ActiveTasksTable from "./ActiveTasksTable";
 import PendingTasksTable from "./PendingTasksTable";
 import ScheduledTasksTable from "./ScheduledTasksTable";
@@ -14,7 +12,7 @@ import ArchivedTasksTable from "./ArchivedTasksTable";
 import CompletedTasksTable from "./CompletedTasksTable";
 import AggregatingTasksTableContainer from "./AggregatingTasksTableContainer";
 import { useHistory } from "react-router-dom";
-import { queueDetailsPath, taskDetailsPath } from "../paths";
+import { queueDetailsPath } from "../paths";
 import { QueueInfo } from "../reducers/queuesReducer";
 import { AppState } from "../store";
 import { isDarkTheme } from "../theme";
@@ -108,41 +106,6 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "10px",
     marginLeft: "2px",
   },
-  searchbar: {
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    flex: 1,
-  },
-  search: {
-    position: "relative",
-    maxWidth: 400,
-    borderRadius: "18px",
-    backgroundColor: isDarkTheme(theme) ? "#303030" : theme.palette.grey[100],
-    "&:hover, &:focus": {
-      backgroundColor: isDarkTheme(theme) ? "#303030" : theme.palette.grey[200],
-    },
-  },
-  searchIcon: {
-    padding: theme.spacing(0, 2),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  inputRoot: {
-    color: "inherit",
-    width: "100%",
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-    width: "100%",
-    fontSize: "0.85rem",
-  },
 }));
 
 function TasksTableContainer(props: Props & ReduxProps) {
@@ -162,8 +125,6 @@ function TasksTableContainer(props: Props & ReduxProps) {
     { key: "archived", label: "Archived", count: currentStats.archived },
     { key: "completed", label: "Completed", count: currentStats.completed },
   ];
-
-  const [searchQuery, setSearchQuery] = useState<string>("");
 
   return (
     <Paper variant="outlined" className={classes.container}>
@@ -186,34 +147,6 @@ function TasksTableContainer(props: Props & ReduxProps) {
               onClick={() => history.push(queueDetailsPath(props.queue, c.key))}
             />
           ))}
-        </div>
-        <div className={classes.searchbar}>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search by ID"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-              }}
-              inputProps={{
-                "aria-label": "search",
-                onKeyDown: (e) => {
-                  if (e.key === "Enter") {
-                    history.push(
-                      taskDetailsPath(props.queue, searchQuery.trim())
-                    );
-                  }
-                },
-              }}
-            />
-          </div>
         </div>
       </div>
       <TabPanel value="active" selected={props.selected}>

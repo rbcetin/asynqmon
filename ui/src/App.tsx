@@ -107,10 +107,12 @@ const useStyles = (theme: Theme) =>
     appBarSpacer: theme.mixins.toolbar,
     mainContainer: {
       display: "flex",
-      width: "100vw",
+      width: "100%",
+      overflow: "hidden",
     },
     content: {
       flex: 1,
+      minWidth: 0,
       height: "100vh",
       overflow: "hidden",
       background: theme.palette.background.paper,
@@ -119,7 +121,8 @@ const useStyles = (theme: Theme) =>
       height: "100%",
       display: "flex",
       paddingTop: "64px", // app-bar height
-      overflow: "scroll",
+      overflowY: "auto",
+      overflowX: "hidden",
     },
     sidebarContainer: {
       display: "flex",

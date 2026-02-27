@@ -18,11 +18,17 @@ body.light-theme ::-webkit-scrollbar-thumb:hover {
   background: rgba(15, 23, 42, 0.30);
 }
 
-/* Prevent horizontal overflow */
-body.light-theme #root,
-body.light-theme main {
+/* Prevent horizontal overflow (all themes) */
+#root,
+main {
   max-width: 100%;
   overflow-x: hidden;
+}
+
+/* Constrain tables and wide content inside the main area */
+.MuiTableContainer-root {
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 /* pre / code wrapping */

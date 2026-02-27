@@ -230,15 +230,6 @@ export default function TasksTable(props: Props) {
         tasks={props.tasks}
         selectedIds={selectedIds}
         onSelectIds={setSelectedIds}
-        onBatchDelete={
-          props.batchDeleteTasks
-            ? (taskIds) =>
-                props.batchDeleteTasks!(queue, taskIds).then(() =>
-                  setSelectedIds([])
-                )
-            : undefined
-        }
-        batchActionPending={props.batchActionPending}
       />
       <TableContainer component={Paper}>
         <Table
