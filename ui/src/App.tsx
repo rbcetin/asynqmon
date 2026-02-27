@@ -113,16 +113,12 @@ const useStyles = (theme: Theme) =>
     content: {
       flex: 1,
       minWidth: 0,
-      height: "100vh",
-      overflow: "hidden",
+      minHeight: "100vh",
       background: theme.palette.background.paper,
     },
     contentWrapper: {
-      height: "100%",
       display: "flex",
       paddingTop: "64px", // app-bar height
-      overflowY: "auto",
-      overflowX: "hidden",
     },
     sidebarContainer: {
       display: "flex",
