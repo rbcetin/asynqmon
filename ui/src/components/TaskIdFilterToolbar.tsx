@@ -3,7 +3,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
-import { TaskInfoExtended } from "../reducers/tasksReducer";
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -15,7 +14,9 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: "wrap",
   },
   filterInput: {
-    minWidth: 220,
+    minWidth: 180,
+    flex: 1,
+    maxWidth: 300,
     "& .MuiInputBase-root": {
       fontSize: "0.85rem",
     },
@@ -34,15 +35,26 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface TaskIdFilterToolbarProps {
-  tasks: TaskInfoExtended[];
-  selectedIds: string[];
-  onSelectIds: (ids: string[]) => void;
+  filter: string;
+  onFilterChange: (value: string) => void;
+  totalCount: number;
+  matchCount: number;
+  selectedCount: number;
+  onPickFiltered: () => void;
+  onUnpickAll: () => void;
 }
 
 export default function TaskIdFilterToolbar(props: TaskIdFilterToolbarProps) {
-  const { tasks, selectedIds, onSelectIds } = props;
+  const {
+    filter,
+    onFilterChange,
+    totalCount,
+    matchCount,
+    selectedCount,
+    onPickFiltered,
+    onUnpickAll,
+  } = props;
   const classes = useStyles();
-  const [filter, setFilter] = useState("");
   const [feedback, setFeedback] = useState("");
   const feedbackTimer = useRef<number | null>(null);
 
@@ -65,25 +77,13 @@ export default function TaskIdFilterToolbar(props: TaskIdFilterToolbarProps) {
     }, 4000);
   }
 
-  const filterLower = filter.toLowerCase().trim();
-  const matchingTasks = filterLower
-    ? tasks.filter(
-        (t) =>
-          t.id.toLowerCase().includes(filterLower) ||
-          (t.payload && t.payload.toLowerCase().includes(filterLower))
-      )
-    : tasks;
-  const matchCount = matchingTasks.length;
-
   const handlePickFiltered = () => {
-    const matchingIds = matchingTasks.map((t) => t.id);
-    const merged = Array.from(new Set([...selectedIds, ...matchingIds]));
-    onSelectIds(merged);
-    showFeedback(`Picked ${matchingIds.length} task(s)`);
+    onPickFiltered();
+    showFeedback(`Picked ${matchCount} task(s)`);
   };
 
   const handleUnpickAll = () => {
-    onSelectIds([]);
+    onUnpickAll();
     showFeedback("Cleared selection");
   };
 
@@ -93,9 +93,9 @@ export default function TaskIdFilterToolbar(props: TaskIdFilterToolbarProps) {
         className={classes.filterInput}
         size="small"
         variant="outlined"
-        placeholder="Filter by task ID or payload..."
+        placeholder="Filter by ID or payload..."
         value={filter}
-        onChange={(e) => setFilter(e.target.value)}
+        onChange={(e) => onFilterChange(e.target.value)}
       />
       <Button
         size="small"
@@ -110,12 +110,12 @@ export default function TaskIdFilterToolbar(props: TaskIdFilterToolbarProps) {
         size="small"
         variant="outlined"
         onClick={handleUnpickAll}
-        disabled={selectedIds.length === 0}
+        disabled={selectedCount === 0}
       >
         Unpick all
       </Button>
       <Typography className={classes.stats} component="span">
-        {matchCount}/{tasks.length} match &middot; {selectedIds.length} selected
+        {matchCount}/{totalCount} match &middot; {selectedCount} selected
       </Typography>
       {feedback && (
         <Typography className={classes.feedback} component="span">

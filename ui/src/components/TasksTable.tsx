@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -30,7 +30,8 @@ import { TaskState } from "../types/taskState";
 
 const useStyles = makeStyles((theme) => ({
   table: {
-    minWidth: 650,
+    width: "100%",
+    tableLayout: "auto",
   },
   stickyHeaderCell: {
     background: theme.palette.background.paper,
@@ -82,6 +83,17 @@ export default function TasksTable(props: Props) {
   const [page, setPage] = useState(0);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [activeTaskId, setActiveTaskId] = useState<string>("");
+  const [filterText, setFilterText] = useState("");
+
+  const filteredTasks = useMemo(() => {
+    const q = filterText.toLowerCase().trim();
+    if (!q) return props.tasks;
+    return props.tasks.filter(
+      (t) =>
+        t.id.toLowerCase().includes(q) ||
+        (t.payload && t.payload.toLowerCase().includes(q))
+    );
+  }, [props.tasks, filterText]);
 
   const handlePageChange = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -99,7 +111,7 @@ export default function TasksTable(props: Props) {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = props.tasks.map((t) => t.id);
+      const newSelected = filteredTasks.map((t) => t.id);
       setSelectedIds(newSelected);
     } else {
       setSelectedIds([]);
@@ -215,7 +227,7 @@ export default function TasksTable(props: Props) {
     );
   }
 
-  const rowCount = props.tasks.length;
+  const rowCount = filteredTasks.length;
   const numSelected = selectedIds.length;
   return (
     <div>
@@ -227,9 +239,16 @@ export default function TasksTable(props: Props) {
         />
       )}
       <TaskIdFilterToolbar
-        tasks={props.tasks}
-        selectedIds={selectedIds}
-        onSelectIds={setSelectedIds}
+        filter={filterText}
+        onFilterChange={setFilterText}
+        totalCount={props.tasks.length}
+        matchCount={filteredTasks.length}
+        selectedCount={selectedIds.length}
+        onPickFiltered={() => {
+          const matchingIds = filteredTasks.map((t) => t.id);
+          setSelectedIds(Array.from(new Set([...selectedIds, ...matchingIds])));
+        }}
+        onUnpickAll={() => setSelectedIds([])}
       />
       <TableContainer component={Paper}>
         <Table
@@ -274,7 +293,7 @@ export default function TasksTable(props: Props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {props.tasks.map((task) => {
+            {filteredTasks.map((task) => {
               return props.renderRow({
                 key: task.id,
                 task: task,
