@@ -61,7 +61,7 @@ function TasksView(props: ConnectedProps<typeof connector>) {
   }, [listQueuesAsync]);
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth={false}>
       <Grid container spacing={0} className={classes.container}>
         <Grid item xs={12} className={classes.breadcrumbs}>
           <QueueBreadCrumb queues={props.queues} queueName={qname} />

@@ -7,19 +7,18 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableFooter from "@material-ui/core/TableFooter";
-import TablePagination from "@material-ui/core/TablePagination";
 import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
 import IconButton from "@material-ui/core/IconButton";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ArchiveIcon from "@material-ui/icons/Archive";
 import CancelIcon from "@material-ui/icons/Cancel";
 import Alert from "@material-ui/lab/Alert";
 import AlertTitle from "@material-ui/lab/AlertTitle";
-import TablePaginationActions, {
-  rowsPerPageOptions,
-} from "./TablePaginationActions";
+import TablePaginationActions from "./TablePaginationActions";
 import TableActions from "./TableActions";
 import TaskIdFilterToolbar from "./TaskIdFilterToolbar";
 import { usePolling } from "../hooks";
@@ -42,6 +41,17 @@ const useStyles = makeStyles((theme) => ({
   },
   pagination: {
     border: "none",
+  },
+  paginationInner: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    gap: "16px",
+  },
+  rowsPerPage: {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
   },
 }));
 
@@ -102,10 +112,9 @@ export default function TasksTable(props: Props) {
     setPage(newPage);
   };
 
-  const handleRowsPerPageChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    props.taskRowsPerPageChange(parseInt(event.target.value, 10));
+  const handleRowsPerPageChange = (value: number) => {
+    const clamped = Math.max(1, Math.min(500, value));
+    props.taskRowsPerPageChange(clamped);
     setPage(0);
   };
 
@@ -326,21 +335,35 @@ export default function TasksTable(props: Props) {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TablePagination
-                rowsPerPageOptions={rowsPerPageOptions}
+              <TableCell
                 colSpan={props.columns.length + 1}
-                count={props.totalTaskCount}
-                rowsPerPage={pageSize}
-                page={page}
-                SelectProps={{
-                  inputProps: { "aria-label": "rows per page" },
-                  native: true,
-                }}
-                onPageChange={handlePageChange}
-                onRowsPerPageChange={handleRowsPerPageChange}
-                ActionsComponent={TablePaginationActions}
                 className={classes.pagination}
-              />
+              >
+                <div className={classes.paginationInner}>
+                  <div className={classes.rowsPerPage}>
+                    <Typography variant="body2" component="span">
+                      Rows per page:
+                    </Typography>
+                    <TextField
+                      type="number"
+                      size="small"
+                      variant="outlined"
+                      value={pageSize}
+                      onChange={(e) => handleRowsPerPageChange(parseInt(e.target.value, 10) || 1)}
+                      inputProps={{ min: 1, max: 500, style: { width: 50, padding: "4px 8px", textAlign: "center" } }}
+                    />
+                    <Typography variant="body2" component="span" color="textSecondary">
+                      {page * pageSize + 1}–{Math.min((page + 1) * pageSize, props.totalTaskCount)} of {props.totalTaskCount}
+                    </Typography>
+                  </div>
+                  <TablePaginationActions
+                    count={props.totalTaskCount}
+                    page={page}
+                    rowsPerPage={pageSize}
+                    onPageChange={handlePageChange}
+                  />
+                </div>
+              </TableCell>
             </TableRow>
           </TableFooter>
         </Table>
